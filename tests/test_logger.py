@@ -1,17 +1,19 @@
 import logging
 import pytest
 from logger import setup_logger
+from unittest.mock import MagicMock
+
 
 def test_logger_configuration(tmp_path, mocker):
     """Test that the logger is configured correctly."""
-    # Mock FileHandler and StreamHandler
-    mock_file_handler = mocker.patch("logging.FileHandler")
-    mock_stream_handler = mocker.patch("logging.StreamHandler")
+    # Mock FileHandler and StreamHandler with autospec
+    mock_file_handler = mocker.patch("logging.FileHandler", autospec=True)
+    mock_stream_handler = mocker.patch("logging.StreamHandler", autospec=True)
 
     # Temporary log file for testing
     log_file = tmp_path / "test_log.log"
-    
-    # Set up logger with the temporary log file
+
+    # Patch FileHandler to use a temporary file
     mocker.patch("logging.FileHandler", return_value=logging.FileHandler(log_file))
     setup_logger()
 
@@ -26,6 +28,7 @@ def test_logger_configuration(tmp_path, mocker):
     mock_file_handler.assert_called_with("tiktok_to_youtube.log")
     assert log_file.exists()
 
+
 def test_logger_output(capsys):
     """Test logger outputs messages to the console."""
     setup_logger()
@@ -39,6 +42,7 @@ def test_logger_output(capsys):
 
     # Verify that the message is in the console output
     assert "Test log message" in captured.out
+
 
 def test_log_file_creation(tmp_path, mocker):
     """Test that a log file is created and written to."""
