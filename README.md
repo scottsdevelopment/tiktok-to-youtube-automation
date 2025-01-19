@@ -1,8 +1,8 @@
 # TikTok to YouTube Automation
 
-![GitHub issues](https://img.shields.io/github/issues/your-org/tiktok-to-youtube-automation)  
-![GitHub license](https://img.shields.io/github/license/your-org/tiktok-to-youtube-automation)  
-![GitHub stars](https://img.shields.io/github/stars/your-org/tiktok-to-youtube-automation)
+![GitHub issues](https://img.shields.io/github/issues/scottsdevelopment/tiktok-to-youtube-automation)  
+![GitHub license](https://img.shields.io/github/license/scottsdevelopment/tiktok-to-youtube-automation)  
+![GitHub stars](https://img.shields.io/github/stars/scottsdevelopment/tiktok-to-youtube-automation)
 
 ## Overview
 
