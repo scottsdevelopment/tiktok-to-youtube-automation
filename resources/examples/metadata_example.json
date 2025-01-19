@@ -1,0 +1,33 @@
+{
+  "id": "1234567890",
+  "text": "Check out this awesome TikTok dance!",
+  "createTime": "1672531200",
+  "authorMeta": {
+    "id": "user123",
+    "name": "TikTokUser",
+    "nickName": "CoolDancer",
+    "verified": true,
+    "fans": 10000,
+    "heart": 50000,
+    "video": 100,
+    "digg": 2000
+  },
+  "musicMeta": {
+    "musicId": "67890",
+    "musicName": "Hit Song",
+    "musicAuthor": "Famous Artist",
+    "musicOriginal": false,
+    "playUrl": "https://music.tiktok.com/hitsong.mp3"
+  },
+  "videoUrl": "https://www.tiktok.com/@user123/video/1234567890",
+  "webVideoUrl": "https://www.tiktok.com/@user123/video/1234567890",
+  "videoMeta": {
+    "width": 720,
+    "height": 1280,
+    "duration": 15
+  },
+  "diggCount": 500,
+  "shareCount": 50,
+  "commentCount": 25,
+  "playCount": 10000
+}
