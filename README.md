@@ -25,7 +25,6 @@ This project provides a fully automated workflow to download TikTok videos, extr
 #### Prerequisites
 
 1. Install Python 3.8 or newer.
-2. Install Node.js and npm (for TikTok scraper).
 3. Set up Google Cloud Console for YouTube Data API v3.
 
 #### Steps
@@ -39,11 +38,6 @@ This project provides a fully automated workflow to download TikTok videos, extr
 2. Install Python dependencies:
    ```bash
    pip install -r requirements.txt
-   ```
-
-3. Install TikTok scraper:
-   ```bash
-   npm install -g tiktok-scraper
    ```
 
 4. Configure YouTube API credentials:
