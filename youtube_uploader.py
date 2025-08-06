@@ -1,11 +1,10 @@
 import os
-import json
+import csv
 import logging
 from googleapiclient.http import MediaFileUpload
 from auth import get_authenticated_service
 
 def upload_to_youtube(youtube, video_path, title, description):
-    """Upload a video to YouTube."""
     try:
         logging.info(f"Uploading video: {video_path} with title: {title}")
         body = {
@@ -35,21 +34,30 @@ def process_and_upload_clips(download_dir):
     """Process downloaded TikTok clips and upload them to YouTube."""
     try:
         youtube = get_authenticated_service()
-        for filename in os.listdir(download_dir):
-            if filename.endswith(".mp4"):
+        metadata_path = os.path.join(download_dir, 'metadata.csv')
+        
+        if not os.path.exists(metadata_path):
+            logging.error(f"Metadata file not found: {metadata_path}")
+            return
+            
+        with open(metadata_path, mode='r', encoding='utf-8') as csv_file:
+            reader = csv.DictReader(csv_file)
+            for row in reader:
+                video_id = row['video_id']
+                username = row['author_username']
+
+                filename = f"@{username}_video_{video_id}.mp4"
                 video_path = os.path.join(download_dir, filename)
-                metadata_path = video_path.replace(".mp4", ".json")
+                
+                title = row.get("video_description") or f"TikTok by {username}"
+                
+                description = f"Credit to @{username} on TikTok."
+                
+                if os.path.exists(video_path):
+                    upload_to_youtube(youtube, video_path, title, description)
+                else:
+                    logging.warning(f"Video file not found for ID {video_id}: {video_path}")
 
-                # Extract metadata
-                title = "TikTok Clip"
-                description = "Uploaded from TikTok"
-                if os.path.exists(metadata_path):
-                    with open(metadata_path, "r") as file:
-                        metadata = json.load(file)
-                        title = metadata.get("text", title)
-                        description = f"Original TikTok: {metadata.get('webVideoUrl', '')}"
-
-                # Upload to YouTube
-                upload_to_youtube(youtube, video_path, title, description)
     except Exception as e:
         logging.error(f"An unexpected error occurred in the process: {e}")
+
