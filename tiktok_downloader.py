@@ -2,6 +2,21 @@ import os
 import shutil
 import logging
 import pyktok as pyk
+from urllib.parse import urlparse
+
+def tiktok_url_to_filename(url: str) -> str:
+    """
+    Converts a TikTok video URL into a safe filename.
+    """
+    parsed = urlparse(url)
+    parts = parsed.path.strip("/").split("/")
+    
+    if len(parts) >= 3 and parts[1] == "video":
+        username = parts[0]
+        video_id = parts[2]
+        return f"{username}_video_{video_id}.mp4"
+    
+    raise ValueError("Invalid TikTok video URL format")
 
 def move_videos_to_download_dir(root_dir, download_dir):
     """Moves all .mp4 files from the root directory to the download directory."""
@@ -31,23 +46,49 @@ def move_videos_to_download_dir(root_dir, download_dir):
         logging.info("No .mp4 files found in the root directory to move.")
 
 
-def download_tiktok_clips(username, download_dir):
+async def download_tiktok_clips(username, download_dir):
     """Download TikTok clips and metadata."""
     try:
         os.makedirs(download_dir, exist_ok=True)
         logging.info(f"Downloading TikTok videos for user: {username}")
         
-        pyk.specify_browser("edge")
-        
-        pyk.save_tiktok_multi_page(
+        video_list = await pyk.get_video_urls(
             username,
             ent_type='user',
-            save_video=True,
-            metadata_fn=os.path.join(download_dir, 'metadata.csv')
+            video_ct=500,
         )
-        
-        move_videos_to_download_dir(os.getcwd(), download_dir)
 
+        logging.info(f"Found {len(video_list)} videos for user {username}.")
+
+        for video in video_list:
+            try:
+                filename = tiktok_url_to_filename(video)
+                root_path = os.path.join(os.getcwd(), filename)
+                download_path = os.path.join(download_dir, filename)
+
+                if os.path.exists(root_path) or os.path.exists(download_path):
+                    logging.info(f"Video already exists: {filename}. Skipping download.")
+                    continue
+
+                if video is None:
+                    logging.warning("Received None for video URL, skipping.")
+                    continue
+
+                logging.info(f"Processing video: {video}")
+                await pyk.save_tiktok(
+                    video,
+                    save_video=True,
+                    metadata_fn=os.path.join(download_dir, "metadata.csv")
+                )
+
+                move_videos_to_download_dir(os.getcwd(), download_dir)
+
+            except Exception as e:
+                logging.error(f"Failed to download video {video}: {e}", exc_info=True)
+                continue
+
+        
+     
         logging.info(f"TikTok clips and metadata downloaded successfully to {download_dir}.")
 
     except PermissionError as e:
